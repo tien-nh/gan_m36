@@ -1,0 +1,6 @@
+expert/*
+Generated_M36/*
+Generated_Test_M36/*
+model_vit/*
+models/*
+*.pth
