@@ -1,0 +1,13 @@
+Loading Test Data...
+-> Train Dataset (Generated): Loaded 57 images.
+Loading Model...
+Running Inference...
+
+========================================
+FINAL EVALUATION RESULTS (GAN BASELINE)
+========================================
+Accuracy: 73.68%
+AUC Score: 0.8797
+ECE (Expected Calibration Error): 0.2290
+----------------------------------------
+Reliability diagram saved to calibration_diagram_gan.png

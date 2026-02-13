@@ -13,7 +13,7 @@ from unet import UNetGenerator3D
 def generate_train_data():
     # --- CẤU HÌNH ---
     CONFIG = {
-        "csv_file": "../datacsv/fold_3_train.csv",       # <--- Dùng tập TRAIN
+        "csv_file": "./fold_1_train+val.csv",       # <--- Dùng tập TRAIN
         "root_dir": "../filter_ds",
         "generator_path": "models/generator_latest.pth",
         "output_dir": "Generated_M36",      # <--- Lưu vào folder TRAIN

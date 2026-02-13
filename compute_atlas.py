@@ -10,7 +10,7 @@ from load_data import LongitudinalCSVDataset
 def generate_disease_atlas():
     # --- Cấu hình ---
     ROOT_DIR = '../filter_ds'
-    CSV_FILE = '../datacsv/fold_3_train.csv' # Dùng tập train để tính Atlas
+    CSV_FILE = '../5_folds_split_3D/fold_1_train.csv' # Dùng tập train để tính Atlas
     DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     print("--- Đang tính toán Disease Atlas từ dữ liệu thật (Real BL vs Real M36) ---")

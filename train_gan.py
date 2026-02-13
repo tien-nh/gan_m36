@@ -18,7 +18,7 @@ def train_gan():
     DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     
     # Batch size = 1 vì ảnh 160x160x96 rất nặng
-    BATCH_SIZE = 1  
+    BATCH_SIZE = 8 
     LR = 1e-4
     EPOCHS = 200    # GAN cần train lâu
     
@@ -28,7 +28,7 @@ def train_gan():
     
     # Đường dẫn (Sửa lại cho đúng file CSV của bạn)
     ROOT_DIR = '../filter_ds'
-    CSV_FILE = '../datacsv/fold_3_train.csv'
+    CSV_FILE = '../5_folds_split_3D/fold_1_train.csv'
     EXPERT_PATH = 'expert/expert_checkpoint.pth' # File bạn vừa train xong
 
     print(f"--- START TRAINING GAN on {DEVICE} ---")

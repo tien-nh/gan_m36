@@ -14,7 +14,7 @@ from unet import UNetGenerator3D
 def generate_test_data():
     # --- CẤU HÌNH ---
     CONFIG = {
-        "csv_file": "../datacsv/fold_3_test.csv",      # File test của bạn
+        "csv_file": "../5_folds_split_3D/fold_1_test.csv",      # File test của bạn
         "root_dir": "../filter_ds",          # Folder chứa dữ liệu gốc
         "generator_path": "models/generator_latest.pth", # Model GAN đã train
         "output_dir": "Generated_Test_M36",     # Nơi lưu ảnh sinh ra

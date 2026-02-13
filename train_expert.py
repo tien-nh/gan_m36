@@ -9,17 +9,21 @@ from load_data import LongitudinalCSVDataset
 # Lưu ý: Nếu tên file của bạn là densenet18.py thì import thế này, nếu là densenet.py thì sửa lại
 from densenet import ExpertDenseNet18 
 
+import os 
+
 def train_expert():
     # --- 2. Cấu hình ---
-    BATCH_SIZE = 2 
+    BATCH_SIZE = 16
     LR = 1e-3
     EPOCHS = 50
     DEVICE = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-    SAVE_PATH = 'expert/expert_checkpoint.pth'
+    SAVE_DIR = 'expert'
+    os.makedirs(SAVE_DIR, exist_ok=True)
+    SAVE_PATH = os.path.join(SAVE_DIR, 'expert_checkpoint.pth')
     
     # Cấu hình đường dẫn (Dựa trên ảnh bạn gửi)
     ROOT_DIR = '../filter_ds'             # Thư mục cha chứa NIfTI
-    CSV_FILE = '../datacsv/fold_3_train.csv' # <-- Thay 'ten_file.csv' bằng tên thật file CSV của bạn
+    CSV_FILE = '../5_folds_split_3D/fold_1_train.csv' # <-- Thay 'ten_file.csv' bằng tên thật file CSV của bạn
 
     print(f"Training Expert Model on {DEVICE}...")
 
@@ -83,6 +87,7 @@ def train_expert():
             print(f"Epoch [{epoch+1}/{EPOCHS}] Loss: {avg_loss:.4f} | Acc: {epoch_acc:.2f}%")
 
     # --- 6. Lưu trọng số ---
+    
     torch.save(model.state_dict(), SAVE_PATH)
     print(f"Đã lưu model expert tại: {SAVE_PATH}")
 

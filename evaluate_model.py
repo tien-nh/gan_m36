@@ -15,9 +15,9 @@ def evaluate():
     # --- CẤU HÌNH ---
     CONFIG = {
         "gen_test_dir": "Generated_Test_M36", # Folder ảnh vừa sinh ở Bước 1
-        "csv_file": "../datacsv/fold_3_test.csv",          # File nhãn thật
-        "atlas_path": "../npy/disease_atlas.npy",      # File Atlas
-        "model_path": "model_vit/prior_vit_best.pth",    # Model ViT đã train
+        "csv_file": "../5_folds_split_3D/fold_1_test.csv",          # File nhãn thật
+        "atlas_path": "npy/disease_atlas.npy",      # File Atlas
+        "model_path": "model_vit/prior_vit_latest.pth",    # Model ViT đã train
         "device": "cuda" if torch.cuda.is_available() else "cpu"
     }
 
@@ -72,6 +72,8 @@ def evaluate():
     except:
         auc = 0.0 # Trường hợp chỉ có 1 class trong test set
 
+    
+
     print("\n" + "="*30)
     print("KẾT QUẢ ĐÁNH GIÁ TRÊN TẬP TEST")
     print("="*30)
@@ -84,6 +86,11 @@ def evaluate():
     print(f"TP: {tp} | FN: {fn}")
     print(f"FP: {fp} | TN: {tn}")
     print("="*30)
+
+    import sklearn.metrics as metrics
+    f1 = metrics.f1_score(all_labels, all_preds)
+
+    print(f"F1 Score: {f1:.4f}")
 
 if __name__ == "__main__":
     evaluate()

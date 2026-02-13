@@ -7,7 +7,7 @@ import os
 import glob
 import pandas as pd
 import nibabel as nib
-import wandb
+# import wandb
 from tqdm import tqdm
 
 # Import model
@@ -16,7 +16,7 @@ from priorViT import PriorViT
 from load_data import LongitudinalCSVDataset 
 
 # --- 1. Dataset cho ảnh sinh ra (Dùng cho TRAINING) ---
-class GeneratedDataset(Dataset):
+class GeneratedDataset_old(Dataset):
     def __init__(self, gen_data_dir, csv_file, target_shape=(160, 160, 96)):
         self.file_paths = glob.glob(os.path.join(gen_data_dir, '*.nii.gz'))
         self.target_shape = target_shape
@@ -58,15 +58,53 @@ class GeneratedDataset(Dataset):
         
         return img_tensor, torch.tensor(label, dtype=torch.long)
 
+
+class GeneratedDataset(Dataset):
+    def __init__(self, gen_data_dir, csv_file, target_shape=(160, 160, 96)):
+        # self.file_paths = glob.glob(os.path.join(gen_data_dir, '*.nii.gz'))
+        self.gen_data_dir = gen_data_dir
+        self.target_shape = target_shape
+        self.df_filtered = self._load_data(csv_file)
+        
+        print(f"-> Train Dataset (Generated): Loaded {len(self.df_filtered)} images.")
+
+    def _load_data(self, csv_file):
+        df = pd.read_csv(csv_file)
+
+        valid_classes = ["Class 1 (CN to CN)", "Class 5 (MCI to AD)"]
+        # delete the rows that have class_label not in valid_classes
+        df = df[df['class_label'].isin(valid_classes)]
+
+        map_label = {
+            "Class 1 (CN to CN)": 0,
+            "Class 5 (MCI to AD)": 1
+        }
+        df['label'] = df['class_label'].map(map_label).astype(int)
+        return df
+    
+    def __len__(self):
+        return len(self.df_filtered)
+    
+    def __getitem__(self, idx):
+        path = os.path.join(self.gen_data_dir, self.df_filtered.iloc[idx]['subject ID'] + '.nii.gz')
+        filename = os.path.basename(path)
+        img = nib.load(path).get_fdata()
+        img_tensor = torch.from_numpy(img).float().unsqueeze(0)
+        label = self.df_filtered.iloc[idx]['label']
+        
+        return img_tensor, torch.tensor(label, dtype=torch.long)
+
+
+
 # --- 2. Main Training Loop ---
 def train_vit_classifier():
     # ================= CẤU HÌNH =================
     CONFIG = {
         "gen_data_dir": "Generated_M36",  # Folder ảnh GAN (Train)
-        "train_csv": "../datacsv/fold_3_train.csv",    # CSV Train
-        "val_csv": "../datacsv/fold_3_val.csv",        # CSV Validation
+        "train_csv": "./fold_1_train+val.csv",    # CSV Train
+        "val_csv": "../5_folds_split_3D/fold_1_test.csv",        # CSV Validation
         "root_dir_real": "../filter_ds",     # Folder chứa ảnh thật (cho Val)
-        "atlas_path": "../npy/disease_atlas.npy",
+        "atlas_path": "npy/disease_atlas.npy",
         "batch_size": 4,
         "lr": 1e-4,
         "epochs": 60,
@@ -75,7 +113,7 @@ def train_vit_classifier():
     }
     # ============================================
 
-    wandb.init(project="AD_PriorViT_Classifier", config=CONFIG, name="Run_Scheduler_Tuning")
+    # wandb.init(project="AD_PriorViT_Classifier", config=CONFIG, name="Run_Scheduler_Tuning")
     DEVICE = torch.device(CONFIG["device"])
     
     # 1. Load Atlas
@@ -166,19 +204,17 @@ def train_vit_classifier():
         current_lr = optimizer.param_groups[0]['lr']
 
         # ================= LOGGING & SAVING =================
-        print(f"-> Summary Epoch {epoch+1}:")
-        print(f"   Train Loss: {avg_train_loss:.4f} | Train Acc: {train_acc:.2f}%")
-        print(f"   Val Loss:   {avg_val_loss:.4f} | Val Acc:   {val_acc:.2f}%")
-        print(f"   LR: {current_lr}")
         
-        wandb.log({
-            "epoch": epoch + 1,
-            "train_loss": avg_train_loss,
-            "train_acc": train_acc,
-            "val_loss": avg_val_loss,
-            "val_acc": val_acc,
-            "learning_rate": current_lr # <-- Log thêm cái này để vẽ đồ thị LR
-        })
+        # wandb.log({
+        #     "epoch": epoch + 1,
+        #     "train_loss": avg_train_loss,
+        #     "train_acc": train_acc,
+        #     "val_loss": avg_val_loss,
+        #     "val_acc": val_acc,
+        #     "learning_rate": current_lr # <-- Log thêm cái này để vẽ đồ thị LR
+        # })
+
+        print (f"Epoch {epoch+1}: Train Loss: {avg_train_loss:.4f} | Train Acc: {train_acc:.2f}% | Val Loss: {avg_val_loss:.4f} | Val Acc: {val_acc:.2f}% | LR: {current_lr}")
 
         if val_acc > best_val_acc:
             best_val_acc = val_acc
@@ -188,7 +224,7 @@ def train_vit_classifier():
         torch.save(model.state_dict(), "prior_vit_latest.pth")
 
     print(f"Training Complete. Best Val Acc: {best_val_acc:.2f}%")
-    wandb.finish()
+    # wandb.finish()
 
 if __name__ == "__main__":
     train_vit_classifier()

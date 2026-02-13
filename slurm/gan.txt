@@ -1,0 +1,21 @@
+Loading Test Data...
+-> Train Dataset (Generated): Loaded 57 images.
+Loading Model from model_vit/prior_vit_latest.pth...
+Running Inference...
+
+==============================
+KẾT QUẢ ĐÁNH GIÁ TRÊN TẬP TEST
+==============================
+Accuracy (Độ chính xác): 0.7368 (73.68%)
+Sensitivity (Độ nhạy - Tìm ra bệnh): 0.9231
+Specificity (Độ đặc hiệu - Loại trừ lành tính): 0.5806
+AUC Score: 0.8797
+------------------------------
+Confusion Matrix:
+TP: 24 | FN: 2
+FP: 13 | TN: 18
+==============================
+F1 Score: 0.7619
+
+
+82.61/ 85.19 / 80.00 / 83.02/ 77.27 / 81.63 / 85.71/ 90.20 / 77.26 / 90.20 / 83.02 / 88.46 / 80 / 85.71 / 79.07 / 90.57 / 77.75 / 84.00 / 90.57 / 87.50 / 78.26 / 80.00 / 78.57 / 80.70 / 85.71 / 77.42 / 82.35 / 81.48 / 80.85 / 81.97 / 78.43 / 84.00 
